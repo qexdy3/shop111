@@ -14,27 +14,30 @@ class Store:
             with open("data.json", "r", encoding="utf-8") as f:
                 data = json.load(f)
 
-            for u in data["users"]:
-                if u["role"] == "admin":
+            for u in data.get("users", []):
+                if u.get("role") == "admin":
                     user = Admin(u["username"], u["password"])
                 else:
                     user = User(u["username"], u["password"])
-                    user.history = u["history"]
+                    user.history = u.get("history", [])
                 self.users.append(user)
 
-            for p in data["products"]:
+            for p in data.get("products", []):
                 self.products.append(Product.from_dict(p))
-        except:
+        except FileNotFoundError:
             self.users.append(User("user", "123"))
             self.users.append(Admin("admin", "admin"))
-            self.products.append(Product(1, "Ноутбук", 70000, "техника"))
-            self.products.append(Product(2, "Наушники", 5000, "аксессуары"))
+            self.products = [
+                Product(1, "Ноутбук", 70000, "техника"),
+                Product(2, "Наушники", 5000, "аксессуары"),
+                Product(3, "Смартфон", 45000, "техника")
+            ]
             self.save()
 
     def save(self):
         data = {
             "users": [],
-            "products": []
+            "products": [p.to_dict() for p in self.products]
         }
 
         for u in self.users:
@@ -42,11 +45,8 @@ class Store:
                 "username": u.username,
                 "password": u.password,
                 "role": "admin" if isinstance(u, Admin) else "user",
-                "history": getattr(u, "history", [])
+                "history": u.history
             })
-
-        for p in self.products:
-            data["products"].append(p.to_dict())
 
         with open("data.json", "w", encoding="utf-8") as f:
             json.dump(data, f, indent=4, ensure_ascii=False)
@@ -56,3 +56,8 @@ class Store:
             if u.username == login and u.password == password:
                 return u
         return None
+
+    def get_next_id(self):
+        if not self.products:
+            return 1
+        return max(p.id for p in self.products) + 1
