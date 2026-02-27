@@ -15,3 +15,14 @@ class Admin(User):
                 store.save()
                 return True
         return False
+
+    def change_price(self, store, pid, new_price):
+        for p in store.products:
+            if p.id == pid:
+                p.price = new_price
+                store.save()
+                return True
+        return False
+
+    def list_users(self, store):
+        return store.users
