@@ -32,6 +32,7 @@ while True:
             choice = input("Выбор → ")
 
             if choice == "1":
+                user.show_products_list(store)
                 name = input("Название: ").strip()
                 try:
                     price = int(input("Цена: "))
@@ -45,6 +46,7 @@ while True:
 
             elif choice == "2":
                 try:
+                    user.show_products_list(store)
                     pid = int(input("ID товара: "))
                     if user.delete_product(store, pid):
                         print("Товар удалён")
@@ -55,6 +57,7 @@ while True:
 
             elif choice == "3":
                 try:
+                    user.show_products_list(store)
                     pid = int(input("ID товара: "))
                     new_price = int(input("Новая цена: "))
                     if user.change_price(store, pid, new_price):
