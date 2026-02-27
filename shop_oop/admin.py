@@ -26,3 +26,20 @@ class Admin(User):
 
     def list_users(self, store):
         return store.users
+        
+    def show_products_list(self, store):
+        if not store.products:
+            print("Список товаров пуст.")
+            return
+
+        print("\n" + "="*60)
+        print("Список всех товаров:")
+        print("ID | Название              | Цена     | Категория     | Продано")
+        print("-"*60)
+
+        for p in sorted(store.products, key=lambda x: x.id):
+            name = p.name[:20] + "..." if len(p.name) > 20 else p.name.ljust(20)
+            category = p.category[:13] + "..." if len(p.category) > 13 else p.category.ljust(13)
+            print(f"{p.id:2} | {name} | {p.price:8} | {category} | {p.sold:6}")
+
+        print("="*60)
